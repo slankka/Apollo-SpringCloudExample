@@ -5,9 +5,10 @@
 APP.ID: hello
 
 已经存在一条:
+
 ApolloConfig{appId='hello', cluster='default', namespaceName='application', configurations={hello=30001}, releaseKey='20180309161318-97e01da2c6abf01d'}
 
-如果，把下面的代码
+如果，把下面的代码中的三个注解去掉
 ```
 //@Configuration
 //@EnableApolloConfig
@@ -28,12 +29,13 @@ public class ApolloBridgedController {
     ....
 ```
 
-注释掉，JDBC可以创建HikariCP数据源，该项目可以正常启动。也就是说下面的报错
+注释掉之后，JDBC可以创建HikariCP数据源，该项目可以正常启动。也就是说下面的报错
 ${hikari.driverclassname}注入失败，在没有Apollo注解的参与下，是不存在的
 
 
 ## The Error Information
 
+```
 [DEBUG] [00:45:16.891][ApolloSpringApplicationRunListener][59]:Apollo bootstrap config is not enabled for context org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@161a019: startup date [Thu Jan 01 08:00:00 CST 1970]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@1af146, see property: ${apollo.bootstrap.enabled}
 [INFO] [00:45:16.908][AbstractApplicationContext][578]:Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@161a019: startup date [Sat Mar 10 00:45:16 CST 2018]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@1af146
 [INFO] [00:45:17.550][XmlBeanDefinitionReader][317]:Loading XML bean definitions from URL [file:/D:/work_project/project_java/boot-template/target/classes/spring/applicationContext.xml]
@@ -93,3 +95,4 @@ org.springframework.beans.factory.BeanCreationException: Error creating bean wit
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1191) [spring-boot-1.3.5.RELEASE.jar:1.3.5.RELEASE]
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1180) [spring-boot-1.3.5.RELEASE.jar:1.3.5.RELEASE]
 	at com.cloud.template.Bootstrap.main(Bootstrap.java:16) [classes/:?]
+```
