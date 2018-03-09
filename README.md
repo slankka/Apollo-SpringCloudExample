@@ -1,6 +1,6 @@
 ## SpringCloud with Apollo(ctrip)
 
-# The Project cannot start normally.
+# 这里遇到一个问题，恳请帮忙检查一下是什么原因导致.
 
 APP.ID: hello
 
@@ -29,8 +29,9 @@ public class ApolloBridgedController {
     ....
 ```
 
-注释掉之后，JDBC可以创建HikariCP数据源，该项目可以正常启动。也就是说下面的报错
-${hikari.driverclassname}注入失败，在没有Apollo注解的参与下，是不存在的
+注释掉之后，Spring可以成功创建HikariCP数据源，该项目可以正常启动，没有下面的错误信息，说明${hikari.driverclassname}注入没有问题。
+
+但是开启Apollo注解后，就出现下面的报错，${hikari.driverclassname}注入失败。
 
 
 ## The Error Information
