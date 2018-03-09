@@ -1,0 +1,26 @@
+server:
+  port: 7233
+
+spring:
+  profiles:
+    active: @project.env@
+  application:
+    name: com.cloud.template
+  aop:
+    auto: true
+    proxy-target-class: false
+
+eureka:
+  client:
+    healthcheck:
+      enabled: true
+  instance:
+      lease-expiration-duration-in-seconds: 30
+      lease-renewal-interval-in-seconds: 10
+      appname: ${spring.application.name}
+      prefer-ip-address: true
+      instance-id: ${spring.cloud.client.ipAddress}:${server.port}
+#
+#mybatis:
+#  config-location: classpath:mybatis/mybatis-config.xml
+#  mapper-locations: classpath:mybatis/mapper/*.xml

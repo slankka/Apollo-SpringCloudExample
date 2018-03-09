@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="60">
+    <Properties>
+        <Property name="PATTERN">%d %p [%t] %C{1} (%F:%L) [%marker] - %m%n</Property>
+        <Property name="LOG_DIR">./logs/</Property>
+    </Properties>
+    <Appenders>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%level] [%date{HH:mm:ss.SSS}][%class{1}][%line]:%message%n"/>
+        </Console>
+
+        <RollingRandomAccessFile name="infoLog" fileName="${LOG_DIR}/info.log"
+                                 filePattern="${LOG_DIR}/info.log.%d{yyyy-MM-dd}" append="true">
+            <PatternLayout pattern="[%level] [%date{yyyy-MM-dd HH:mm:ss.SSS}][%class{1}][%line]:%message%n"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="warnLog" fileName="${LOG_DIR}/warn.log"
+                                 filePattern="${LOG_DIR}/warn.log.%d{yyyy-MM-dd}" append="true">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="[%level] [%date{yyyy-MM-dd HH:mm:ss.SSS}][%class{1}][%line]:%message%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+        <RollingRandomAccessFile name="errorLog" fileName="${LOG_DIR}/error.log"
+                                 filePattern="${LOG_DIR}/error.log.%d{yyyy-MM-dd}" append="true">
+            <Filters>
+                <ThresholdFilter level="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="[%level] [%date{yyyy-MM-dd HH:mm:ss.SSS}][%class{1}][%line]:%message%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+
+        <RollingRandomAccessFile name="requestLog" fileName="${LOG_DIR}/request.log"
+                                 filePattern="${LOG_DIR}/request.log.%d{yyyy-MM-dd}" append="true">
+            <PatternLayout pattern="[%level] [%date{yyyy-MM-dd HH:mm:ss.SSS}]:%message%n"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingRandomAccessFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <Root level="info">
+            <appenderRef ref="Console"/>
+        </Root>
+
+        <!--requestLog-->
+        <logger name="RequestLog" level="info" additivity="false">
+            <appender-ref ref="requestLog"/>
+            <appender-ref ref="Console"/>
+        </logger>
+
+        <!--  第三方的软件日志级别 -->
+        <logger name="org.springframework" level="info" additivity="false">
+            <appender-ref ref="infoLog"/>
+            <appender-ref ref="warnLog"/>
+            <appender-ref ref="errorLog"/>
+            <appenderRef ref="Console"/>
+        </logger>
+
+        <!-- 应用的日志级别  -->
+        <logger name="com.cloud.template" level="off" additivity="false">
+            <appender-ref ref="infoLog"/>
+            <appender-ref ref="warnLog"/>
+            <appender-ref ref="errorLog"/>
+            <appenderRef ref="Console"/>
+        </logger>
+
+        <logger name="com.ctrip.framework" level="debug" additivity="false">
+            <appender-ref ref="infoLog"/>
+            <appender-ref ref="warnLog"/>
+            <appender-ref ref="errorLog"/>
+            <appenderRef ref="Console"/>
+        </logger>
+
+
+        <!-- 剩余其他的日志级别 -->
+        <Root level="warn" includeLocation="true">
+            <appender-ref ref="warnLog"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>

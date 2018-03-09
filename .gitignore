@@ -1,0 +1,42 @@
+# maven ignore
+target/
+quickpass-gateway-service/target
+#*.jar
+*.war
+*.zip
+*.tar
+*.tar.gz
+*.class
+
+# eclipse ignore
+.settings/
+.project
+.classpath
+.mymetadata
+
+# idea ignore
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# temp ignore
+logs/
+*.doc
+*.log
+*.cache
+*.diff
+*.patch
+*.tmp
+
+# system ignore
+.DS_Store
+Thumbs.db
+.gradle
+#gradle/
+build/
+logs/
+classes/
+
+
+src/main/resources/node_modules

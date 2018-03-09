@@ -1,0 +1,10 @@
+## dataSource
+hikari:
+  jdbcurl: empty
+  username: root
+  password:
+  driverclassname: com.mysql.jdbc.Driver
+  maximumPoolSize: 20
+  idleTimeout: 60000
+  connectTimeout: 5000
+  maxLifetime: 1800000
