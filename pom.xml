@@ -211,11 +211,11 @@
 
     </build>
     <repositories>
-        <repository>
-            <id>nexus</id>
-            <name>Team Nexus Repository</name>
-            <url>http://172.16.3.221:8081/nexus/content/groups/public</url>
-        </repository>
+        <!--<repository>-->
+            <!--<id>nexus</id>-->
+            <!--<name>Team Nexus Repository</name>-->
+            <!--<url>http://172.16.3.221:8081/nexus/content/groups/public</url>-->
+        <!--</repository>-->
         <repository>
             <id>spring-release</id>
             <url>http://repo.spring.io/release/</url>

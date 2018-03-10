@@ -15,7 +15,7 @@
         <property name="resources" value="classpath:conf/application*.yaml"/>
     </bean>
 
-    <context:property-placeholder properties-ref="yamlProperties" ignore-unresolvable="true"/>
+    <context:property-placeholder order="1" properties-ref="yamlProperties" ignore-unresolvable="true"/>
 
     <import resource="applicationContext-mybatis.xml"/>
 

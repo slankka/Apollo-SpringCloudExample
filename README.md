@@ -1,6 +1,6 @@
 ## SpringCloud with Apollo(ctrip)
 
-# 这里遇到一个问题，恳请帮忙检查一下是什么原因导致.
+# Apollo SpringCloud Example
 
 APP.ID: hello
 
@@ -106,3 +106,78 @@ Caused by: org.springframework.beans.factory.BeanCreationException: Could not au
 	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessPropertyValues(AutowiredAnnotationBeanPostProcessor.java:331) ~[spring-beans-4.2.6.RELEASE.jar:4.2.6.RELEASE]
 	... 17 more
 ```
+
+
+
+## 解决
+经过Debug发现：
+
+ApolloClient的
+```ApolloConfigRegistrar```类 在SpringCloud之前注册了```PropertySourcesPlaceholderConfigurer```
+然后
+在SpringCloud启动中的时候，SpringCloud又创建了一个```PropertySourcesPlaceholderConfigurer```
+名字为```
+```org.springframework.context.support.PropertySourcesPlaceholderConfigurer#0```
+（由于applicationContext.xml 中配置了额外的 context:property-placeholder）
+
+而SpringCloud为后者填入正确的 localProperties，也就是包含项目中数据库信息的Properties。
+
+在后面创建Bean的时候，却找不到那些@Value注解的属性了。
+所以直接Bean创建失败，抛异常。
+
+解决方案就是
+在上述xml配置文件中加入 order=1
+
+原理：
+PropertySourcesPlaceholderConfigurer 继承了PriorityOrdered
+经过下面的排序之后：
+
+```
+PostProcessorRegistrationDelegate.java
+
+    // First, invoke the BeanFactoryPostProcessors that implement PriorityOrdered.
+    sortPostProcessors(beanFactory, priorityOrderedPostProcessors);
+    invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
+
+...
+
+	/**
+	 * Invoke the given BeanFactoryPostProcessor beans.
+	 */
+	private static void invokeBeanFactoryPostProcessors(
+			Collection<? extends BeanFactoryPostProcessor> postProcessors, ConfigurableListableBeanFactory beanFactory) {
+
+		for (BeanFactoryPostProcessor postProcessor : postProcessors) {
+			postProcessor.postProcessBeanFactory(beanFactory);
+		}
+	}
+
+
+```
+上述代码中，有两个 beanFactory 都是 PropertySourcesPlaceholderConfigurer 类型。
+
+其中 org.springframework.context.support.PropertySourcesPlaceholderConfigurer#0 是后创建的，它读取了正确配置文件（resources/config/*.yml）
+他会排列在Apollo 抢先创建的PropertySourcesPlaceholderConfigurer之前，但这个是读不到上述特殊路径的配置文件的，换言之，localProperties是空。
+
+接下来，按照顺序去根据 PropertySource 装填Value
+
+```
+PropertySourcesPlaceholderConfigurer.java
+
+//先将 localProperties 取出，生成 propertySources
+
+PropertySource<?> localPropertySource =
+            new PropertiesPropertySource(LOCAL_PROPERTIES_PROPERTY_SOURCE_NAME, mergeProperties());
+    if (this.localOverride) {
+        this.propertySources.addFirst(localPropertySource);
+    }
+    else {
+        this.propertySources.addLast(localPropertySource);
+    }
+
+    ...
+    //这里即将对beanFactory，其中包含HikariCPConfig进行属性填充，倘若这里properties缺少值，后面直接注入失败抛出异常
+    processProperties(beanFactory, new PropertySourcesPropertyResolver(this.propertySources));
+```
+
+总结，问题比较诡异，避免这个问题的方法是：自己的PropertySource，要加优先级
