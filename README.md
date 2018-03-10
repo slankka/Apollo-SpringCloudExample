@@ -1,17 +1,22 @@
-## SpringCloud with Apollo(ctrip)
+# SpringCloud with Apollo(ctrip)
 
-# Apollo SpringCloud Example
+an Apollo SpringCloud Example
 
-APP.ID: hello
 
-已经存在一条:
+# Bug Fix Log
 
-ApolloConfig{appId='hello', cluster='default', namespaceName='application', configurations={hello=30001}, releaseKey='20180309161318-97e01da2c6abf01d'}
+## The bug
+一句话说，由于Apollo在应用启动时，会先注册 PropertySourcesPlaceholderConfigurer，如果项目配置了自定义的PropertySource时，
+Spring也会创建另一份，从而导致应用因缺少 Property 启动失败。
 
-如果，把下面的代码中的三个注解去掉
+
+
+
+## replay
+
 ```
-//@Configuration
-//@EnableApolloConfig
+@Configuration
+@EnableApolloConfig
 public class SpringConfigApollo {
 
     @Bean
@@ -29,9 +34,9 @@ public class ApolloBridgedController {
     ....
 ```
 
-注释掉之后，Spring可以成功创建HikariCP数据源，该项目可以正常启动，没有下面的错误信息，说明${hikari.driverclassname}注入没有问题。
+注释掉EnableApolloConfig之后，Spring可以成功创建HikariCP数据源，该项目可以正常启动，没有下面的错误信息，说明${hikari.driverclassname}注入没有问题。
 
-但是开启Apollo注解后，就出现下面的报错，${hikari.driverclassname}注入失败。
+但是开启这个注解后，就出现下面的报错，${hikari.driverclassname}注入失败。
 
 
 ## The Error Information
