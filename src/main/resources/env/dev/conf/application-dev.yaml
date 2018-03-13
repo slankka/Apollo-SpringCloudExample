@@ -1,4 +1,12 @@
 ## dataSource
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://172.16.2.200:8420/eureka/
+    register-with-eureka: false
+
+
 hikari:
   jdbcurl: empty
   username: root

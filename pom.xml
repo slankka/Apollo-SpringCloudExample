@@ -192,6 +192,7 @@
                     <include>**/*.xml</include>
                     <include>**/*.yaml</include>
                     <include>**/*.properties</include>
+                    <include>**/*.factories</include>
                 </includes>
                 <excludes>
                     <exclude>env/**/*.yaml</exclude>

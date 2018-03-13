@@ -11,11 +11,11 @@
                  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
                 ">
 
-    <bean id="yamlProperties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">
-        <property name="resources" value="classpath:conf/application*.yaml"/>
-    </bean>
+    <!--<bean id="yamlProperties" class="org.springframework.beans.factory.config.YamlPropertiesFactoryBean">-->
+        <!--<property name="resources" value="classpath:conf/application*.yaml"/>-->
+    <!--</bean>-->
 
-    <context:property-placeholder order="1" properties-ref="yamlProperties" ignore-unresolvable="true"/>
+    <!--<context:property-placeholder order="-1" properties-ref="yamlProperties" ignore-unresolvable="true"/>-->
 
     <import resource="applicationContext-mybatis.xml"/>
 
