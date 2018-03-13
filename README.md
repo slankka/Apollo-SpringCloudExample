@@ -194,3 +194,37 @@ PropertySource<?> localPropertySource =
 ## 总结
 
 问题比较诡异，避免这个问题的方法是：自己的PropertySource，要加优先级
+
+--------
+
+## 更新
+
+
+
+在使用SpringCloud的情况下，由于该版本Spring中，
+ConfigurationPropertiesBindingPostProcessor 在为 EurekaClient填充 注册中心地址的时，
+如果有两个PropertySourcesPlaceholderConfigurer，下面的代码会返回null。也就是找不到自定义配置的值，那Eureka启动就失败了。
+
+```
+//ConfigurationPropertiesBindingPostProcessor.java:260
+private PropertySourcesPlaceholderConfigurer getSinglePropertySourcesPlaceholderConfigurer() {
+    // Take care not to cause early instantiation of all FactoryBeans
+    if (this.beanFactory instanceof ListableBeanFactory) {
+        ListableBeanFactory listableBeanFactory = (ListableBeanFactory) this.beanFactory;
+        Map<String, PropertySourcesPlaceholderConfigurer> beans = listableBeanFactory
+                .getBeansOfType(PropertySourcesPlaceholderConfigurer.class, false,
+                        false);
+        if (beans.size() == 1) {
+            return beans.values().iterator().next();
+        }
+    }
+    return null;
+}
+
+```
+
+## 解决方法
+项目中，最多配置一个 PropertySourcesPlaceholderConfigurer。因此要么把自定义配置的文件按照Spring Boot的规范放置，文件名和路径都要按照规范，
+就不需要自己定义了。要么自己加载Yaml配置文件。
+
+参见提交[Commit #7277a6d](https://github.com/slankka/Apollo-SpringCloudExample/commit/7277a6dc9d3246e01c85c7dba4a80407fbe614e4#diff-44ecb57ad9a1faa2ba1dbc96c21ad55f]).
